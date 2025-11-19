@@ -1,0 +1,30 @@
+[2025-06-14 15:11:54.969658] [tm_devices] [   DEBUG] timezone==Asia/Shanghai
+[2025-06-14 15:11:54.971651] [tm_devices] [   DEBUG] tm_devices==3.2.0
+[2025-06-14 15:11:54.971651] [tm_devices] [    INFO] Opening DeviceManager
+[2025-06-14 15:11:54.971651] [tm_devices] [    INFO] Creating Connection to SCOPE 1
+[2025-06-14 15:11:54.993658] [tm_devices] [   DEBUG] SCOPE VISA timeout set to: 5000.000ms
+[2025-06-14 15:11:54.993658] [tm_devices] [   DEBUG] (SCOPE) Write >>  'HEADER OFF'
+[2025-06-14 15:11:54.996814] [tm_devices] [    INFO] (SCOPE 1) Write >>  'DISplay:SELect:SOUrce CH1'
+[2025-06-14 15:11:54.997845] [tm_devices] [    INFO] (SCOPE 1) Query >>  '*IDN?'
+[2025-06-14 15:11:55.006974] [tm_devices] [    INFO] Response from '*IDN?' >>  'TEKTRONIX,MSO64B,C045598,CF:91.1CT FV:2.14.3.2448'
+[2025-06-14 15:11:55.006974] [tm_devices] [    INFO] (SCOPE 1) Write >>  'CH1:SCAle 0.5'
+[2025-06-14 15:11:55.007999] [tm_devices] [    INFO] (SCOPE 1) Write >>  'CH1:POSition -3'
+[2025-06-14 15:11:55.007999] [tm_devices] [    INFO] (SCOPE 1) Write >>  'CH1:BANdwidth 20'
+[2025-06-14 15:11:55.009077] [tm_devices] [    INFO] (SCOPE 1) Write >>  'DISplay:SELect:SOUrce CH2'
+[2025-06-14 15:11:55.010072] [tm_devices] [    INFO] (SCOPE 1) Write >>  'CH2:SCAle 0.5'
+[2025-06-14 15:11:55.010072] [tm_devices] [    INFO] (SCOPE 1) Write >>  'CH2:POSition -3'
+[2025-06-14 15:11:55.011069] [tm_devices] [    INFO] (SCOPE 1) Write >>  'CH2:BANdwidth 20'
+[2025-06-14 15:11:55.011069] [tm_devices] [    INFO] (SCOPE 1) Write >>  'DISplay:SELect:SOUrce CH3'
+[2025-06-14 15:11:55.012066] [tm_devices] [    INFO] (SCOPE 1) Write >>  'CH3:SCAle 0.5'
+[2025-06-14 15:11:55.012066] [tm_devices] [    INFO] (SCOPE 1) Write >>  'CH3:POSition -3'
+[2025-06-14 15:11:55.013062] [tm_devices] [    INFO] (SCOPE 1) Write >>  'CH3:BANdwidth 20'
+[2025-06-14 15:11:55.013062] [tm_devices] [    INFO] (SCOPE 1) Write >>  'DISplay:SELect:SOUrce CH4'
+[2025-06-14 15:11:55.014060] [tm_devices] [    INFO] (SCOPE 1) Write >>  'CH4:SCAle 0.5'
+[2025-06-14 15:11:55.015056] [tm_devices] [    INFO] (SCOPE 1) Write >>  'CH4:POSition -3'
+[2025-06-14 15:11:55.015056] [tm_devices] [    INFO] (SCOPE 1) Write >>  'CH4:BANdwidth 20'
+[2025-06-14 15:11:55.015056] [tm_devices] [    INFO] (SCOPE 1) Write >>  'HORizontal:SCAle 0.01'
+[2025-06-14 15:11:55.016558] [tm_devices] [    INFO] (SCOPE 1) Write >>  'HORizontal:POSition 10'
+[2025-06-14 15:11:55.017069] [tm_devices] [    INFO] (SCOPE 1) Write >>  'TRIGger:A:TYPe EDGE'
+[2025-06-14 15:11:55.017069] [tm_devices] [    INFO] Closing Connections to Devices
+[2025-06-14 15:11:55.017069] [tm_devices] [    INFO] Closing Connection to SCOPE 1
+[2025-06-14 15:11:55.018078] [tm_devices] [    INFO] DeviceManager Closed

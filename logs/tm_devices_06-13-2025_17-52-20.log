@@ -1,0 +1,26 @@
+[2025-06-13 17:52:20.981589] [tm_devices] [   DEBUG] timezone==Asia/Shanghai
+[2025-06-13 17:52:20.982586] [tm_devices] [   DEBUG] tm_devices==3.2.0
+[2025-06-13 17:52:20.982586] [tm_devices] [    INFO] Opening DeviceManager
+[2025-06-13 17:52:20.984088] [tm_devices] [    INFO] Creating Connection to SCOPE 1
+[2025-06-13 17:52:21.006603] [tm_devices] [   DEBUG] SCOPE VISA timeout set to: 5000.000ms
+[2025-06-13 17:52:21.006603] [tm_devices] [   DEBUG] (SCOPE) Write >>  'HEADER OFF'
+[2025-06-13 17:52:21.009595] [tm_devices] [    INFO] (SCOPE 1) Write >>  'TRIGger:A:TYPe EDGE'
+[2025-06-13 17:52:21.010592] [tm_devices] [    INFO] (SCOPE 1) Write >>  'DISplay:SELect:SOUrce CH1'
+[2025-06-13 17:52:21.011588] [tm_devices] [    INFO] (SCOPE 1) Write >>  'MEASUrement:ADDMEAS PK2Pk-'
+[2025-06-13 17:52:21.012584] [tm_devices] [    INFO] (SCOPE 1) Query >>  '*OPC?'
+[2025-06-13 17:52:21.242145] [tm_devices] [    INFO] Response from '*OPC?' >>  '1'
+[2025-06-13 17:52:21.243141] [tm_devices] [    INFO] (SCOPE 1) Query >>  'MEASUrement:MEAS1:RESUlts:ALLAcqs:MEAN?'
+[2025-06-13 17:52:21.247130] [tm_devices] [    INFO] Response from 'MEASUrement:MEAS1:RESUlts:ALLAcqs:MEAN?' >>  '18.3097300275503E-9'
+[2025-06-13 17:52:21.247130] [tm_devices] [    INFO] Closing Connections to Devices
+[2025-06-13 17:52:21.247130] [tm_devices] [    INFO] Closing Connection to SCOPE 1
+[2025-06-13 17:52:21.248127] [tm_devices] [    INFO] DeviceManager Closed
+[2025-06-13 17:53:01.761887] [tm_devices] [CRITICAL] KeyboardInterrupt
+
+An uncaught exception occurred. If the exception was explicitly raised by the tm_devices package, look for the most recent previous ERROR log entry above to see the specific timestamp of the exception. Otherwise, use the traceback to debug the issue.
+
+Traceback (most recent call last):
+  File "D:\CodeProject\PyProject\Lib_TEST_x32\main.py", line 6, in <module>
+    app.mainloop()
+  File "C:\Users\KK\AppData\Local\Programs\Python\Python312-32\Lib\tkinter\__init__.py", line 1499, in mainloop
+    self.tk.mainloop(n)
+KeyboardInterrupt

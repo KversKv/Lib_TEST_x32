@@ -9,6 +9,8 @@ import devicei2c
 
 class OUTPUT_VOL_UI:
     def __init__(self, content_frame, controller):
+        self.current_entry = None
+        self.voltage_entry = None
         self.content_frame = content_frame
         # self.controller = controller
         self.controller = ins_n6705c.PowerSupplyController(self)  # 将self作为UI的引用传递
@@ -49,7 +51,7 @@ class OUTPUT_VOL_UI:
         self.channel_label.pack(side="left", padx=5, pady=5)
         self.channel_var = tk.StringVar(self.content_frame)
         self.channel_var.set("CH1")  # 默认通道为CH1
-        self.channel_menu = ttk.OptionMenu(frame_channel, self.channel_var, "CH1", "CH1", "CH2", "CH3", "CH4")
+        self.channel_menu = ttk.OptionMenu(frame_channel, self.channel_var, "CH2", "CH1", "CH2", "CH3", "CH4")
         self.channel_menu.pack(side="left", padx=5, pady=5)
         self.channel_on_button = ttk.Button(frame_channel, text="SET", command=self.set_voltagemode)
         self.channel_on_button.pack(side="left", padx=5, pady=5)
@@ -89,13 +91,13 @@ class OUTPUT_VOL_UI:
         ttk.Label(frame_vbit_config, text="Max value", anchor="w").grid(row=2, column=2, pady=5)
         ttk.Entry(frame_vbit_config, textvariable=self.max_value_var).grid(row=2, column=3, pady=5)
 
-        ttk.Button(frame_vbit_config, text="Start", command=self.run_output_voltage_test2).grid(row=3, columnspan=2,
+        ttk.Button(frame_vbit_config, text="Start", command=self.run_output_voltage_test).grid(row=3, columnspan=2,
                                                                                                 pady=10)
 
-        ttk.Button(self.content_frame, text="Check IIC Reg ADDR Weight", command=self.check_iic_weight).pack(
-            side="left", pady=10)
+        ttk.Button(frame_vbit_config, text="Check IIC Reg ADDR Weight", command=self.check_iic_weight).grid(row=4, columnspan=2,
+                                                                                                pady=10)
 
-        ttk.Button(self.content_frame, text="Run Test", command=self.run_output_voltage_test).pack(pady=10)
+        ttk.Button(self.content_frame, text="Run Debug Func", command=self.run_output_voltage_test_debug).pack(pady=10)
 
         # 创建输入区域
         input_frame = ttk.Frame(self.content_frame)
@@ -110,6 +112,12 @@ class OUTPUT_VOL_UI:
         resource_name = self.instr_var.get()
         print(resource_name)
         self.controller.connect(resource_name)
+
+    def connect_direct(self):
+        resource_name="TCPIP0::K-N6705C-06098.local::inst0::INSTR"
+        print(resource_name)
+        self.controller.connect(resource_name)
+
 
     def disconnect(self):
         self.controller.disconnect()
@@ -162,56 +170,52 @@ class OUTPUT_VOL_UI:
         pmu_reg_8b = deviceI2C.read_register_value_8bit(pmu_addr, reg_addr)
         pmu_reg_10b = deviceI2C.read_register_value_10bit(pmu_addr, reg_addr)
 
+
+
         messagebox.showinfo("Des", f"""self_pmu 8bit is 0x{self_pmu_reg_8b:x}
 self_pmu 10bit is 0x{self_pmu_reg_10b:x}
 pmu 8bit is 0x{pmu_reg_8b:x}
 pmu 10bit is 0x{pmu_reg_10b:x}
 Please choose the write weight of your test""")
 
-    def run_output_voltage_test(self):
 
-        iic_weight = 8
-        device_addr = 0x27
-        reg_addr = 0x0128
-        lsb = 10
-        msb = 14
+    # "TCPIP0::K-N6705C-06098.local::inst0::INSTR"
+    def run_output_voltage_test_debug(self):
+        self.connect_direct()
+        iic_weight = 10
+        device_addr = 0x17
+        reg_addr = 0x0047
+        lsb = 0
+        msb = 7
         vol_channel = 2
 
         deviceI2C = devicei2c.DeviceI2C()
         self.controller.get_voltage(vol_channel)
         default_reg_value = deviceI2C.read_register_value_bit(device_addr, reg_addr, iic_weight)
-        # print(f"default_reg_value= 0x{default_reg_value:x}")
+        #print(f"default_reg_value= 0x{default_reg_value:x}")
         voltage = self.controller.get_voltage(vol_channel)
-        counter = msb - lsb + 1
+        #print(f"voltage= {voltage}")
         output = []
         offset = [0x3, 0x7, 0xf, 0x1f, 0x3f, 0x7f, 0xff, 0x1ff, 0x3ff, 0x7ff, 0xfff, 0x1fff, 0x3fff, 0x7fff, 0xffff]
         data_base = default_reg_value & (~(offset[msb - lsb - 1] << lsb))
-        min_value = 0x1250
-        max_value = 0x5E50
-        for i in range(0, pow(2, counter), 1):
-            time1 = time.time()
-            write_reg = data_base | i << lsb
-            time2 = time.time()
-            print(time2 - time1)
+        #print(f"data_base= 0x{data_base:x}")
 
-            if write_reg <= min_value:
-                write_reg2 = min_value
-            elif write_reg >= max_value:
-                write_reg2 = max_value
-            else:
-                write_reg2 = write_reg
-            deviceI2C.write_register_value_bit(device_addr, reg_addr, write_reg2, iic_weight)
+        min_value = 0x33
+        max_value = 0x35
+        i = min_value
+        while i <= max_value:
+            write_reg = data_base | i << lsb
+            deviceI2C.write_register_value_bit(device_addr, reg_addr, write_reg, iic_weight)
+            time.sleep(0.1)
             time1 = time.time()
-            print(time1 - time2)
-            # output.append(i)
-            time.sleep(0.003)
-            time2 = time.time()
-            print(time2 - time1)
             voltage = str(float(self.controller.get_voltage(vol_channel)))
-            current = str(float(self.controller.get_current(vol_channel)))
-            time1 = time.time()
-            print(time1 - time2)
-            output.append((i, voltage, current))
+            time2 = time.time()
+            # current = str(float(self.controller.get_current(vol_channel)))
+            current = 0
+            print(f"i = 0x{i:x},    {voltage},    {current}")
+            print(f"get vol  data process cost {time2 - time1}")
+            output.append((f"{i:x}", voltage, current))
+            i = i + 1
         result = []
         for item in output:
             # 将集合转换为列表，并确保元素顺序一致
@@ -221,8 +225,9 @@ Please choose the write weight of your test""")
         result.append(f"derlta,  voltage,   current")
         self.test_result_text.delete("1.0", tk.END)
         self.test_result_text.insert(tk.END, "\n".join(result))
+        self.disconnect()
 
-    def run_output_voltage_test2(self):
+    def run_output_voltage_test(self):
         # 获取输入数据并在测试结果区域显示
         iic_weight = self.iic_weight.get()
         iic_weight = int(iic_weight, 10)
@@ -234,6 +239,10 @@ Please choose the write weight of your test""")
         lsb = int(lsb, 10)
         msb = self.msb_var.get()
         msb = int(msb, 10)
+        min_value = self.min_value_var.get()
+        min_value = int(min_value, 16)
+        max_value = self.max_value_var.get()
+        max_value = int(max_value, 16)
 
         vol_channel = self.channel_var.get()
         if vol_channel == 'CH1':
@@ -248,30 +257,23 @@ Please choose the write weight of your test""")
         deviceI2C = devicei2c.DeviceI2C()
         self.controller.get_voltage(vol_channel)
         default_reg_value = deviceI2C.read_register_value_bit(device_addr, reg_addr, iic_weight)
-        # print(f"default_reg_value= 0x{default_reg_value:x}")
-        voltage = self.controller.get_voltage(vol_channel)
-        counter = msb - lsb + 1
         output = []
         offset = [0x3, 0x7, 0xf, 0x1f, 0x3f, 0x7f, 0xff, 0x1ff, 0x3ff, 0x7ff, 0xfff, 0x1fff, 0x3fff, 0x7fff, 0xffff]
         data_base = default_reg_value & (~(offset[msb - lsb - 1] << lsb))
-        min_value = 0x0000
-        max_value = 0xffff
-        for i in range(0, pow(2, counter), 1):
-            write_reg = data_base | i << lsb
 
-            if write_reg <= min_value:
-                write_reg2 = min_value
-            elif write_reg >= max_value:
-                write_reg2 = max_value
-            else:
-                write_reg2 = write_reg
-            deviceI2C.write_register_value_bit(device_addr, reg_addr, write_reg2, iic_weight)
-            # output.append(i)
+        i = min_value
+        while i <= max_value:
+            time1 = time.time()
+            write_reg = data_base | i << lsb
+            deviceI2C.write_register_value_bit(device_addr, reg_addr, write_reg, iic_weight)
             time.sleep(0.003)
             voltage = str(float(self.controller.get_voltage(vol_channel)))
-            current = str(float(self.controller.get_current(vol_channel)))
-
-            output.append((i, voltage, current))
+            # current = str(float(self.controller.get_current(vol_channel)))
+            current = 0
+            output.append((f"{i:>4x}", voltage, current))
+            i = i + 1
+            time2 = time.time()
+            print(f"cust time = {time2 - time1}")
         result = []
         for item in output:
             # 将集合转换为列表，并确保元素顺序一致

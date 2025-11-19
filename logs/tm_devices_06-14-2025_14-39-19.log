@@ -1,0 +1,24 @@
+[2025-06-14 14:39:19.016542] [tm_devices] [   DEBUG] timezone==Asia/Shanghai
+[2025-06-14 14:39:19.018535] [tm_devices] [   DEBUG] tm_devices==3.2.0
+[2025-06-14 14:39:19.019036] [tm_devices] [    INFO] Opening DeviceManager
+[2025-06-14 14:39:19.019036] [tm_devices] [    INFO] Creating Connection to SCOPE 1
+[2025-06-14 14:39:19.035331] [tm_devices] [   DEBUG] SCOPE VISA timeout set to: 5000.000ms
+[2025-06-14 14:39:19.036346] [tm_devices] [   DEBUG] (SCOPE) Write >>  'HEADER OFF'
+[2025-06-14 14:39:19.038439] [tm_devices] [    INFO] (SCOPE 1) Write >>  'TRIGger:A:TYPe EDGE'
+[2025-06-14 14:39:19.039435] [tm_devices] [    INFO] (SCOPE 1) Write >>  'DISplay:SELect:SOUrce CH1'
+[2025-06-14 14:39:19.040432] [tm_devices] [    INFO] (SCOPE 1) Write >>  ':VERTICAL:SCALE 0.5'
+[2025-06-14 14:39:19.040432] [tm_devices] [    INFO] (SCOPE 1) Query >>  ':VERTICAL:SCALE?'
+[2025-06-14 14:39:24.042809] [tm_devices] [   ERROR] The query of SCOPE 1 for ':VERTICAL:SCALE?' failed with the following message: VisaIOError('VI_ERROR_TMO (-1073807339): Timeout expired before operation completed.')
+[2025-06-14 14:39:24.042809] [tm_devices] [    INFO] Closing Connections to Devices
+[2025-06-14 14:39:24.042809] [tm_devices] [    INFO] Closing Connection to SCOPE 1
+[2025-06-14 14:39:24.043803] [tm_devices] [    INFO] DeviceManager Closed
+[2025-06-14 14:39:30.538102] [tm_devices] [CRITICAL] KeyboardInterrupt
+
+An uncaught exception occurred. If the exception was explicitly raised by the tm_devices package, look for the most recent previous ERROR log entry above to see the specific timestamp of the exception. Otherwise, use the traceback to debug the issue.
+
+Traceback (most recent call last):
+  File "D:\CodeProject\PyProject\Lib_TEST_x32\main.py", line 6, in <module>
+    app.mainloop()
+  File "C:\Users\KK\AppData\Local\Programs\Python\Python312-32\Lib\tkinter\__init__.py", line 1499, in mainloop
+    self.tk.mainloop(n)
+KeyboardInterrupt

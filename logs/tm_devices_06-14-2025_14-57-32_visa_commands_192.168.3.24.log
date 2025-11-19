@@ -1,0 +1,20 @@
+HEADER OFF
+TRIGger:A:TYPe EDGE
+DISplay:SELect:SOUrce CH1
+*IDN?
+CH1:SCAle 0.5
+CH1:POSition -3
+DISplay:SELect:SOUrce CH2
+CH2:SCAle 0.5
+CH2:POSition -3
+DISplay:SELect:SOUrce CH3
+CH3:SCAle 0.5
+CH3:POSition -3
+DISplay:SELect:SOUrce CH4
+CH4:SCAle 0.5
+CH4:POSition -3
+HORizontal:SCAle 0.01
+HORizontal:POSition 0.1
+MEASUrement:ADDMEAS PK2Pk-
+*OPC?
+MEASUrement:MEAS1:RESUlts:ALLAcqs:MEAN?

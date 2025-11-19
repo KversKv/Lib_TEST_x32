@@ -1,0 +1,30 @@
+[2025-06-14 14:39:37.197419] [tm_devices] [   DEBUG] timezone==Asia/Shanghai
+[2025-06-14 14:39:37.198415] [tm_devices] [   DEBUG] tm_devices==3.2.0
+[2025-06-14 14:39:37.199413] [tm_devices] [    INFO] Opening DeviceManager
+[2025-06-14 14:39:37.199413] [tm_devices] [    INFO] Creating Connection to SCOPE 1
+[2025-06-14 14:39:37.227957] [tm_devices] [   DEBUG] SCOPE VISA timeout set to: 5000.000ms
+[2025-06-14 14:39:37.227957] [tm_devices] [   DEBUG] (SCOPE) Write >>  'HEADER OFF'
+[2025-06-14 14:39:37.231484] [tm_devices] [    INFO] (SCOPE 1) Write >>  'TRIGger:A:TYPe EDGE'
+[2025-06-14 14:39:37.232481] [tm_devices] [    INFO] (SCOPE 1) Write >>  'DISplay:SELect:SOUrce CH1'
+[2025-06-14 14:39:37.233477] [tm_devices] [    INFO] (SCOPE 1) Write >>  'DISplay:SELect:SOUrce CH2'
+[2025-06-14 14:39:37.233477] [tm_devices] [    INFO] (SCOPE 1) Write >>  'DISplay:SELect:SOUrce CH3'
+[2025-06-14 14:39:37.234474] [tm_devices] [    INFO] (SCOPE 1) Write >>  'DISplay:SELect:SOUrce CH4'
+[2025-06-14 14:39:37.234976] [tm_devices] [    INFO] (SCOPE 1) Write >>  'HORizontal:SCAle 0.01'
+[2025-06-14 14:39:37.234976] [tm_devices] [    INFO] (SCOPE 1) Write >>  'MEASUrement:ADDMEAS PK2Pk-'
+[2025-06-14 14:39:37.235988] [tm_devices] [    INFO] (SCOPE 1) Query >>  '*OPC?'
+[2025-06-14 14:39:37.682158] [tm_devices] [    INFO] Response from '*OPC?' >>  '1'
+[2025-06-14 14:39:37.683154] [tm_devices] [    INFO] (SCOPE 1) Query >>  'MEASUrement:MEAS1:RESUlts:ALLAcqs:MEAN?'
+[2025-06-14 14:39:37.686659] [tm_devices] [    INFO] Response from 'MEASUrement:MEAS1:RESUlts:ALLAcqs:MEAN?' >>  '9.91E+37'
+[2025-06-14 14:39:37.686659] [tm_devices] [    INFO] Closing Connections to Devices
+[2025-06-14 14:39:37.686659] [tm_devices] [    INFO] Closing Connection to SCOPE 1
+[2025-06-14 14:39:37.686659] [tm_devices] [    INFO] DeviceManager Closed
+[2025-06-14 14:53:21.828080] [tm_devices] [CRITICAL] KeyboardInterrupt
+
+An uncaught exception occurred. If the exception was explicitly raised by the tm_devices package, look for the most recent previous ERROR log entry above to see the specific timestamp of the exception. Otherwise, use the traceback to debug the issue.
+
+Traceback (most recent call last):
+  File "D:\CodeProject\PyProject\Lib_TEST_x32\main.py", line 6, in <module>
+    app.mainloop()
+  File "C:\Users\KK\AppData\Local\Programs\Python\Python312-32\Lib\tkinter\__init__.py", line 1499, in mainloop
+    self.tk.mainloop(n)
+KeyboardInterrupt

@@ -7,12 +7,14 @@ from ins import ins_n6705c
 from second_ui import chamber_ui
 from second_ui import n6705c_ui
 from second_ui import msox_ui
+from second_ui import mso64b_ui
 from second_ui import output_vol_ui
 from second_ui import dcdc_eff_ui
 from second_ui import charger_voreg_ui
 from second_ui import charger_cc_ui
 from second_ui import charger_iterm_ui
 from second_ui import pmu_gpadc_test_ui
+from second_ui import test_ui
 
 import  devicei2c
 import time
@@ -122,7 +124,7 @@ class Application(tk.Tk):
         # 配置Menu样式
         ins_menu.config(bg='#E1E8F6', activebackground='#C9D9F1')
 
-        instruments = ["N6705C", "E36313A", "MOSX", "CHAMBER"]
+        instruments = ["N6705C", "E36313A", "MOSX", "MSO64B", "CHAMBER"]
 
         for item in instruments:
             ins_menu.add_command(label=item, command=lambda i=item: self.show_instrument(i))
@@ -137,7 +139,7 @@ class Application(tk.Tk):
         # 配置Menu样式
         pmu_menu.config(bg='#E1E8F6', activebackground='#C9D9F1')
 
-        pmu_tests = ["Output Voltage", "DCDC Efficiency", "Load Tran", "GPADC TEST"]
+        pmu_tests = ["Output Voltage", "DCDC Efficiency", "Load Tran", "GPADC TEST", "TEST"]
 
         for item in pmu_tests:
             pmu_menu.add_command(label=item, command=lambda i=item: self.show_pmu_test(i))
@@ -173,6 +175,11 @@ class Application(tk.Tk):
         elif instrument_name == "MOSX":
             msox_ui_ac = msox_ui.MSOX_UI(self.content_frame)
             msox_ui_ac.create_msox_module()
+
+        elif instrument_name == "MSO64B":
+            mso64b_ui_ac = mso64b_ui.MSO64B_UI(self.content_frame)
+            mso64b_ui_ac.create_mso64b_module()
+
         else:
             ttk.Label(self.content_frame, text=f"{instrument_name} Module", font=("Arial", 20)).pack(pady=20)
             ttk.Label(self.content_frame, text=f"Welcome to the {instrument_name} module!").pack(pady=10)
@@ -189,6 +196,9 @@ class Application(tk.Tk):
         elif test_name == "GPADC TEST":
             gpadc_test_ui_ac = pmu_gpadc_test_ui.PMU_GPADC_TEST_UI(self.content_frame, self.controller)
             gpadc_test_ui_ac.create_pmu_gpadc_module()
+        elif test_name == "TEST":
+            test_ui_ac = test_ui.TEST_UI(self.content_frame, self.controller)
+            test_ui_ac.create_test_module()
         else:
             ttk.Label(self.content_frame, text=f"{test_name} Module", font=("Arial", 20)).pack(pady=20)
             ttk.Label(self.content_frame, text=f"Welcome to the {test_name} module!").pack(pady=10)

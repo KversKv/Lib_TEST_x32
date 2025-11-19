@@ -1,0 +1,16 @@
+[2025-06-13 17:53:08.957860] [tm_devices] [   DEBUG] timezone==Asia/Shanghai
+[2025-06-13 17:53:08.959855] [tm_devices] [   DEBUG] tm_devices==3.2.0
+[2025-06-13 17:53:08.959855] [tm_devices] [    INFO] Opening DeviceManager
+[2025-06-13 17:53:08.959855] [tm_devices] [    INFO] Creating Connection to SCOPE 1
+[2025-06-13 17:53:08.983379] [tm_devices] [   DEBUG] SCOPE VISA timeout set to: 5000.000ms
+[2025-06-13 17:53:08.984376] [tm_devices] [   DEBUG] (SCOPE) Write >>  'HEADER OFF'
+[2025-06-13 17:53:08.987394] [tm_devices] [    INFO] (SCOPE 1) Write >>  'TRIGger:A:TYPe EDGE'
+[2025-06-13 17:53:08.987394] [tm_devices] [    INFO] (SCOPE 1) Write >>  'DISplay:SELect:SOUrce CH1'
+[2025-06-13 17:53:08.988390] [tm_devices] [    INFO] (SCOPE 1) Write >>  'MEASUrement:ADDMEAS PK2Pk-'
+[2025-06-13 17:53:08.989385] [tm_devices] [    INFO] (SCOPE 1) Query >>  '*OPC?'
+[2025-06-13 17:53:09.020416] [tm_devices] [    INFO] Response from '*OPC?' >>  '1'
+[2025-06-13 17:53:09.020416] [tm_devices] [    INFO] (SCOPE 1) Query >>  'MEASUrement:MEAS1:RESUlts:ALLAcqs:MEAN?'
+[2025-06-13 17:53:09.082445] [tm_devices] [    INFO] Response from 'MEASUrement:MEAS1:RESUlts:ALLAcqs:MEAN?' >>  '9.91E+37'
+[2025-06-13 17:53:09.082445] [tm_devices] [    INFO] Closing Connections to Devices
+[2025-06-13 17:53:09.082445] [tm_devices] [    INFO] Closing Connection to SCOPE 1
+[2025-06-13 17:53:09.083440] [tm_devices] [    INFO] DeviceManager Closed

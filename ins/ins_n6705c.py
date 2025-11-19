@@ -36,22 +36,23 @@ class PowerSupplyController():
         self.instr.write(f"TRIG:ARB:SOUR BUS")
         self.instr.write(f"INIT:TRAN (@{channel})")
 
-    def dlog_config(self, channel):
+    def dlog_config(self, channel, duration, interval):
         self.instr.write(f"SENS:DLOG:FUNC:VOLT OFF, (@1)")
         self.instr.write(f"SENS:DLOG:FUNC:CURR OFF, (@1)")
         self.instr.write(f"SENS:DLOG:FUNC:VOLT OFF, (@2)")
         self.instr.write(f"SENS:DLOG:FUNC:CURR OFF, (@2)")
         self.instr.write(f"SENS:DLOG:FUNC:VOLT OFF, (@3)")
         self.instr.write(f"SENS:DLOG:FUNC:CURR OFF, (@3)")
-        self.instr.write(f"SENS:DLOG:FUNC:VOLT OFF, (@3)")
-        self.instr.write(f"SENS:DLOG:FUNC:CURR OFF, (@3)")
-        self.instr.write(f"SENS:DLOG:FUNC:VOLT ON, (@{channel})")
+        self.instr.write(f"SENS:DLOG:FUNC:VOLT OFF, (@4)")
+        self.instr.write(f"SENS:DLOG:FUNC:CURR OFF, (@4)")
+        # self.instr.write(f"SENS:DLOG:FUNC:VOLT ON, (@{channel})")
         self.instr.write(f"SENS:DLOG:FUNC:CURR ON, (@{channel})")
+        # self.instr.write(f"SENS:DLOG:VOLT:RANG:AUTO ON, (@{channel})")
         self.instr.write(f"SENS:DLOG:CURR:RANG:AUTO ON, (@{channel})")
-        self.instr.write(f"SENS:DLOG:VOLT:RANG:AUTO ON, (@{channel})")
-        self.instr.write(f"SENS:DLOG:TIME 12")
-        self.instr.write(f"SENS:DLOG:PER .0001")
-        self.instr.write("TRIG:DLOG:SOUR BUS")
+        self.instr.write(f"SENS:DLOG:PER .00002")
+        self.instr.write(f"SENS:DLOG:TIME {duration}")
+
+        # self.instr.write("TRIG:DLOG:SOUR BUS")
         self.instr.write("INIT:DLOG \"internal:\\data1.dlog\"")
 
     def export_file(self):
@@ -67,7 +68,7 @@ class PowerSupplyController():
         try:
             self.instr = self.rm.open_resource(resource_name)
             self.instr.write("*CLS")  # 清除状态
-            self.instr.timeout = 30000  # 设置读取超时时间为2000ms
+            self.instr.timeout = 20000  # 设置读取超时时间为2000ms
             self.ui.update_status("Connected", "green")
             self.keep_updating = True  # 连接成功后允许更新
             self.identify_instrument()
@@ -246,6 +247,21 @@ class PowerSupplyController():
         if self.instr_lib is not None:
             try:
                 voltage = self.instr_lib.measure_voltage(channel)
+                # voltage = self.instr_lib.measure_voltage_fast(channel)
+                return voltage
+            except pyvisa.VisaIOError as e:
+                self.ui.show_error("Read Error", f"Failed to read voltage from the instrument: {e}")
+        else:
+            self.ui.show_error("Connection Error", "Not connected to the instrument.")
+
+    def fetch_voltage(self, channel):
+        """
+        更新电压和电流显示
+        """
+        if self.instr_lib is not None:
+            try:
+                voltage = self.instr_lib.fetch_voltage(channel)
+                # voltage = self.instr_lib.measure_voltage_fast(channel)
                 return voltage
             except pyvisa.VisaIOError as e:
                 self.ui.show_error("Read Error", f"Failed to read voltage from the instrument: {e}")
@@ -298,6 +314,22 @@ class PowerSupplyController():
         if self.instr_lib is not None:
             try:
                 current = float(self.instr_lib.measure_current(channel))
+                # current = float(self.instr_lib.measure_current_fast(channel))
+                current_str = self.format_current(current)
+                return current
+            except pyvisa.VisaIOError as e:
+                self.ui.show_error("Read Error", f"Failed to read voltage from the instrument: {e}")
+        else:
+            self.ui.show_error("Connection Error", "Not connected to the instrument.")
+
+    def fetch_current(self, channel):
+        """
+        更新电压和电流显示
+        """
+        if self.instr_lib is not None:
+            try:
+                current = float(self.instr_lib.fetch_current(channel))
+                # current = float(self.instr_lib.measure_current_fast(channel))
                 current_str = self.format_current(current)
                 return current
             except pyvisa.VisaIOError as e:
@@ -346,7 +378,7 @@ class PowerSupplyController():
         """
         根据电流值自动转换单位并保留小数点后三位
         """
-        if current >= 1:
+        if current >= 1.0:
             return f"{current:.3f} A"
         elif current >= 1e-3:
             return f"{current * 1e3:.3f} mA"
@@ -363,3 +395,147 @@ class PowerSupplyController():
             channel = self.ui.get_selected_channel()
             self.update_current(channel)
             self.ui.master.after(500, self.update_current_periodically)
+
+    def get_average_current(self, channel, duration):
+        """
+        获取指定通道一段时间内的平均电流（使用Data Logger功能）
+
+        参数:
+            channel (int): 通道号 (1, 2, 3, 4)
+            duration (float): 测量时长（秒）
+
+        返回:
+            float: 平均电流值
+        """
+        if self.instr_lib is None or not isinstance(self.instr_lib, n6705c.N6705C):
+            self.ui.show_error("Instrument Error", "N6705C instrument not connected or identified")
+            return 0.0
+
+        try:
+            # 设置采样参数
+            interval = 0.00002  # 1ms采样间隔
+            points = int(duration / interval)
+
+
+            # 配置Data Logger
+            self.dlog_config(channel, duration, interval)
+
+
+            # 应用采样设置
+            self.instr.write(f"SENS:DLOG:TIME {duration}")
+            self.instr.write(f"SENS:DLOG:PER {interval}")
+
+            # 启动Data Logger
+            self.instr.write("INIT:DLOG \"internal:\\data1.dlog\"")
+            self.instr.write("TRIG:DLOG:SOUR BUS")
+            time.sleep(0.3)
+            self.BUS_TRG()  # 触发开始记录
+
+            # 等待记录完成
+            time.sleep(duration + 2)  # 增加缓冲时间
+            self.instr.write(f"DIAG:FP:KEY 74")
+
+            # 导出数据到CSV
+            self.export_file()
+
+            # 正确读取CSV数据
+            self.instr.write('MMEM:DATA? "datalog1.csv"')
+            # 读取原始二进制响应
+            raw_data = self.instr.read_raw((points+1024))
+
+            # 将原始数据转换为字符串
+            data_str = raw_data.decode('ascii', errors='ignore')
+
+            # 分割为行
+            lines = data_str.split('\n')
+
+            # 跳过文件头（通常是前3-5行）
+            start_index = 0
+            for i, line in enumerate(lines):
+                if line.startswith("Sample,") or line.startswith("Sample,"):
+                    start_index = i + 1
+                    break
+
+            # 解析电流数据
+            currents = []
+            for line in lines[start_index:]:
+                if line and ',' in line:
+                    try:
+                        # CSV格式：样本索引,电流值
+                        parts = line.split(',')
+                        if len(parts) >= 2:
+                            current_str = parts[1].strip()
+                            currents.append(float(current_str))
+                    except (ValueError, IndexError):
+                        continue
+
+            # 计算平均值
+            if currents:
+                avg_current = sum(currents) / len(currents)
+                return  self.format_current(avg_current)
+            else:
+                self.ui.show_warning("Data Error", "No current data found in log file")
+                return 0.0
+
+        except pyvisa.VisaIOError as e:
+            self.ui.show_error("Measurement Error", f"Failed to get average current: {e}")
+            return 0.0
+        except Exception as e:
+            self.ui.show_error("Processing Error", f"Error processing data: {e}")
+            return 0.0
+
+
+    def get_average_current_from_maker(self, channel, duration):
+        """
+        获取指定通道一段时间内的平均电流（使用Data Logger功能）
+
+        参数:
+            channel (int): 通道号 (1, 2, 3, 4)
+            duration (float): 测量时长（秒）
+
+        返回:
+            float: 平均电流值
+        """
+        if self.instr_lib is None or not isinstance(self.instr_lib, n6705c.N6705C):
+            self.ui.show_error("Instrument Error", "N6705C instrument not connected or identified")
+            return 0.0
+
+        try:
+            # 设置采样参数
+            interval = 0.00002  # 1ms采样间隔
+            points = int(duration / interval)
+
+
+            # 配置Data Logger
+            self.dlog_config(channel, duration, interval)
+
+
+            # 启动Data Logger
+            self.instr.write("INIT:DLOG \"internal:\\data1.dlog\"")
+            self.instr.write("TRIG:DLOG:SOUR BUS")
+            time.sleep(0.3)
+            self.BUS_TRG()  # 触发开始记录
+
+            # 等待记录完成
+            time.sleep(duration + 1.5)  # 增加缓冲时间
+            self.instr.write(f"DIAG:FP:KEY 74")
+
+            self.instr.write(f"SENS:DLOG:FUNC:MINM ON")
+            self.instr.write(f"SENS:DLOG:MARK1:POIN {0.1}")
+            self.instr.write(f"SENS:DLOG:MARK2:POIN {duration - 0.1}")
+            avg_current = self.instr.query(f"FETC:DLOG:CURR? (@{channel})")
+
+            # 计算平均值
+            if avg_current:
+                print(avg_current)
+                return  self.format_current(float(avg_current))
+            else:
+                self.ui.show_warning("Data Error", "No current data found in log file")
+                return 0.0
+
+        except pyvisa.VisaIOError as e:
+            self.ui.show_error("Measurement Error", f"Failed to get average current: {e}")
+            return 0.0
+        except Exception as e:
+            self.ui.show_error("Processing Error", f"Error processing data: {e}")
+            return 0.0

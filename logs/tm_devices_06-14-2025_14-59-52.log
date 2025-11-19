@@ -1,0 +1,42 @@
+[2025-06-14 14:59:52.739425] [tm_devices] [   DEBUG] timezone==Asia/Shanghai
+[2025-06-14 14:59:52.740422] [tm_devices] [   DEBUG] tm_devices==3.2.0
+[2025-06-14 14:59:52.740422] [tm_devices] [    INFO] Opening DeviceManager
+[2025-06-14 14:59:52.740422] [tm_devices] [    INFO] Creating Connection to SCOPE 1
+[2025-06-14 14:59:52.762854] [tm_devices] [   DEBUG] SCOPE VISA timeout set to: 5000.000ms
+[2025-06-14 14:59:52.762854] [tm_devices] [   DEBUG] (SCOPE) Write >>  'HEADER OFF'
+[2025-06-14 14:59:52.765844] [tm_devices] [    INFO] (SCOPE 1) Write >>  'TRIGger:A:TYPe EDGE'
+[2025-06-14 14:59:52.765844] [tm_devices] [    INFO] (SCOPE 1) Write >>  'DISplay:SELect:SOUrce CH1'
+[2025-06-14 14:59:52.767346] [tm_devices] [    INFO] (SCOPE 1) Query >>  '*IDN?'
+[2025-06-14 14:59:52.789452] [tm_devices] [    INFO] Response from '*IDN?' >>  'TEKTRONIX,MSO64B,C045598,CF:91.1CT FV:2.14.3.2448'
+[2025-06-14 14:59:52.789452] [tm_devices] [    INFO] (SCOPE 1) Write >>  'CH1:SCAle 0.5'
+[2025-06-14 14:59:52.789452] [tm_devices] [    INFO] (SCOPE 1) Write >>  'CH1:POSition -3'
+[2025-06-14 14:59:52.790448] [tm_devices] [    INFO] (SCOPE 1) Write >>  'CH1:BANdwidth 20'
+[2025-06-14 14:59:52.791445] [tm_devices] [    INFO] (SCOPE 1) Write >>  'DISplay:SELect:SOUrce CH2'
+[2025-06-14 14:59:52.791946] [tm_devices] [    INFO] (SCOPE 1) Write >>  'CH2:SCAle 0.5'
+[2025-06-14 14:59:52.791946] [tm_devices] [    INFO] (SCOPE 1) Write >>  'CH2:POSition -3'
+[2025-06-14 14:59:52.792962] [tm_devices] [    INFO] (SCOPE 1) Write >>  'DISplay:SELect:SOUrce CH3'
+[2025-06-14 14:59:52.793959] [tm_devices] [    INFO] (SCOPE 1) Write >>  'CH3:SCAle 0.5'
+[2025-06-14 14:59:52.793959] [tm_devices] [    INFO] (SCOPE 1) Write >>  'CH3:POSition -3'
+[2025-06-14 14:59:52.793959] [tm_devices] [    INFO] (SCOPE 1) Write >>  'DISplay:SELect:SOUrce CH4'
+[2025-06-14 14:59:52.794955] [tm_devices] [    INFO] (SCOPE 1) Write >>  'CH4:SCAle 0.5'
+[2025-06-14 14:59:52.795954] [tm_devices] [    INFO] (SCOPE 1) Write >>  'CH4:POSition -3'
+[2025-06-14 14:59:52.795954] [tm_devices] [    INFO] (SCOPE 1) Write >>  'HORizontal:SCAle 0.01'
+[2025-06-14 14:59:52.795954] [tm_devices] [    INFO] (SCOPE 1) Write >>  'HORizontal:POSition 10'
+[2025-06-14 14:59:52.795954] [tm_devices] [    INFO] (SCOPE 1) Write >>  'MEASUrement:ADDMEAS PK2Pk-'
+[2025-06-14 14:59:52.797457] [tm_devices] [    INFO] (SCOPE 1) Query >>  '*OPC?'
+[2025-06-14 14:59:53.359855] [tm_devices] [    INFO] Response from '*OPC?' >>  '1'
+[2025-06-14 14:59:53.359855] [tm_devices] [    INFO] (SCOPE 1) Query >>  'MEASUrement:MEAS1:RESUlts:ALLAcqs:MEAN?'
+[2025-06-14 14:59:53.363903] [tm_devices] [    INFO] Response from 'MEASUrement:MEAS1:RESUlts:ALLAcqs:MEAN?' >>  '9.91E+37'
+[2025-06-14 14:59:53.363903] [tm_devices] [    INFO] Closing Connections to Devices
+[2025-06-14 14:59:53.363903] [tm_devices] [    INFO] Closing Connection to SCOPE 1
+[2025-06-14 14:59:53.364897] [tm_devices] [    INFO] DeviceManager Closed
+[2025-06-14 15:08:32.019867] [tm_devices] [CRITICAL] KeyboardInterrupt
+
+An uncaught exception occurred. If the exception was explicitly raised by the tm_devices package, look for the most recent previous ERROR log entry above to see the specific timestamp of the exception. Otherwise, use the traceback to debug the issue.
+
+Traceback (most recent call last):
+  File "D:\CodeProject\PyProject\Lib_TEST_x32\main.py", line 6, in <module>
+    app.mainloop()
+  File "C:\Users\KK\AppData\Local\Programs\Python\Python312-32\Lib\tkinter\__init__.py", line 1499, in mainloop
+    self.tk.mainloop(n)
+KeyboardInterrupt

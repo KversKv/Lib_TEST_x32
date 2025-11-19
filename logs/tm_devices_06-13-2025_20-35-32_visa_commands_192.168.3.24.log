@@ -1,0 +1,9 @@
+HEADER OFF
+TRIGger:A:TYPe EDGE
+DISplay:SELect:SOUrce CH1
+DISplay:SELect:SOUrce CH2
+DISplay:SELect:SOUrce CH3
+DISplay:SELect:SOUrce CH4
+MEASUrement:ADDMEAS PK2Pk-
+*OPC?
+MEASUrement:MEAS1:RESUlts:ALLAcqs:MEAN?

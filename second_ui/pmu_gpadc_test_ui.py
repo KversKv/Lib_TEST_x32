@@ -9,6 +9,7 @@ from drv import vt6002
 
 class PMU_GPADC_TEST_UI:
     def __init__(self, content_frame, controller):
+        self.test_result_text = None
         self.content_frame = content_frame
         # self.controller = controller
         self.controller = ins_n6705c.PowerSupplyController(self)  # 将self作为UI的引用传递

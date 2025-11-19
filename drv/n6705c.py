@@ -1,8 +1,13 @@
+import time
+
 class N6705C:
     def __init__(self, instr):
         self.instr = instr
 
     def set_channel_range(self, channel):
+        self.instr.write(f"SENS:CURR:RANG:AUTO ON, (@{channel})")
+
+    def set_channel_range_off(self, channel):
         self.instr.write(f"SENS:CURR:RANG:AUTO ON, (@{channel})")
 
     def set_voltage(self, channel, voltage):
@@ -52,11 +57,27 @@ class N6705C:
 
     def measure_voltage(self, channel):
         # 测量电压
-        return self.instr.query(f"MEAS:VOLT? (@{channel})")
+         return self.instr.query(f"MEAS:VOLT? (@{channel})")
+
+        # 假设 self.controller.instr 是 pyvisa resource（N6705C）
+
+    def fetch_voltage(self, channel):
+        # 测量电压
+         return self.instr.query(f"FETC:VOLT? (@{channel})")
+
+    def measure_voltage_fast(self, channel):
+        """快速获取电压(使用FETCh命令)"""
+        self.instr.write(f"INIT (@{channel})")  # 触发单次测量
+        return float(self.instr.query(f"FETC:VOLT? (@{channel})"))
 
     def measure_current(self, channel):
         # 测量电流
         return self.instr.query(f"MEAS:CURR? (@{channel})")
+
+    def fetch_current(self, channel):
+        # 测量电流
+        self.instr.write(f"INIT (@{channel})")  # 触发单次测量
+        return float(self.instr.query(f"FETC:CURR? (@{channel})"))
 
     def arb_on(self, channel):
         # 测量电压
@@ -71,4 +92,59 @@ class N6705C:
 
     def trg(self):
         return self.instr.write(f"*TRG")
+
+    def get_average_current(self, channel, duration):
+        """
+        获取指定通道一段时间内的平均电流（使用Data Logger功能）
+
+        参数:
+            channel (int): 通道号 (1, 2, 3, 4)
+            duration (float): 测量时长（秒）
+
+        返回:
+            float: 平均电流值
+        """
+
+        # 配置Data Logger
+        self.dlog_config(channel)
+
+        # 设置采样参数（采样率 = 1/interval）
+        interval = 0.001  # 1ms采样间隔（可根据需要调整）
+        points = int(duration / interval)
+
+        # 应用采样设置
+        self.instr.write(f"SENS:DLOG:TIME {duration}")
+        self.instr.write(f"SENS:DLOG:PER {interval}")
+
+        # 启动Data Logger
+        self.instr.write("INIT:DLOG \"internal:\\data1.dlog\"")
+        self.BUS_TRG()  # 触发开始记录
+
+        # 等待记录完成
+        time.sleep(duration + 0.5)  # 增加0.5秒缓冲时间
+
+        # 导出数据到CSV
+        self.export_file()
+
+        # 从仪器读取CSV数据
+        raw_data = self.instr.query_binary_values('MMEM:DATA? "datalog1.csv"', datatype='s')
+        csv_data = raw_data[0].decode('ascii').split('\n')
+
+        # 解析电流数据（跳过标题行）
+        currents = []
+        for line in csv_data[1:]:
+            if line and ',' in line:
+                try:
+                    # CSV格式：时间,电压,电流
+                    _, _, current_str = line.split(',')
+                    currents.append(float(current_str))
+                except (ValueError, IndexError):
+                    continue
+
+        # 计算平均值
+        if currents:
+            avg_current = sum(currents) / len(currents)
+            return avg_current
+        else:
+            return 0.0
 
