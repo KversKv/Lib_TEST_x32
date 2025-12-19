@@ -97,11 +97,7 @@ class DCDC_EFF_UI:
         ttk.Button(
             input_frame,
             text="Start",
-            command=lambda: self.run_dcdc_eff_test1(
-                save_csv=True,
-                save_linear_plot=True,
-                save_log_plot=False,
-            )
+            command=lambda: self.run_dcdc_eff_test1()
         ).grid(row=7, columnspan=2, pady=10)
 
         # 创建结果区域
@@ -227,7 +223,7 @@ class DCDC_EFF_UI:
 
             while (step_cc > 0 and counter <= stop_cc) or (step_cc < 0 and counter >= stop_cc):
                 self.controller.set_current(iload_ch, counter)
-                time.sleep(0.12)  # 建议时间略长一些
+                time.sleep(0.3)  # 建议时间略长一些
 
                 vbat = float(self.controller.get_voltage(vbat_ch))
                 vout = float(self.controller.get_voltage(vout_ch))
@@ -238,7 +234,7 @@ class DCDC_EFF_UI:
                 eff = (vout * max((i_base - i_out), 1e-9)) / denom
                 eff = max(min(eff, 1.2), 0)  # 限幅：0~120%
 
-                print(f"Vin:{vbat:.3f}  Vout:{vout:.3f}  Iin:{i_in:.4f}  Iout:{i_out:.4f}")
+                print(f"Vin:{vbat:.3f}  Vout:{vout:.3f}  Iin:{i_in:.5f}  Iout:{i_out:.5f}   eff:{eff:.4f}")
 
                 output.append((abs(i_out), eff))
                 counter += step_cc
