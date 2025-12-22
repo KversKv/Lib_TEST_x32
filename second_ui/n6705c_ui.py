@@ -91,6 +91,43 @@ class N6705CUI:
         self.update_button = ttk.Button(frame_measured, text="Update Values", command=self.update_values)
         self.update_button.pack(side="left", padx=5, pady=5)
 
+        # 电流显示框架
+        frame_Tools = ttk.LabelFrame(self.content_frame, text="Tools", padding="10")
+        frame_Tools.pack(padx=10, pady=10, fill="both")
+
+        # ========== 输入变量 ==========
+        self.I_limit = tk.StringVar()
+        self.V1 = tk.StringVar()
+        self.V2 = tk.StringVar()
+        self.V3 = tk.StringVar()
+
+        # ========== 第一行：输入框 ==========
+        ttk.Label(frame_Tools, text="I_limit (mA)").grid(row=0, column=0, padx=5, pady=5, sticky="w")
+        ttk.Entry(frame_Tools, textvariable=self.I_limit, width=10).grid(row=0, column=1, padx=5, pady=5)
+
+        ttk.Label(frame_Tools, text="V1 (V)").grid(row=0, column=2, padx=5, pady=5, sticky="w")
+        ttk.Entry(frame_Tools, textvariable=self.V1, width=10).grid(row=0, column=3, padx=5, pady=5)
+
+        ttk.Label(frame_Tools, text="V2 (V)").grid(row=0, column=4, padx=5, pady=5, sticky="w")
+        ttk.Entry(frame_Tools, textvariable=self.V2, width=10).grid(row=0, column=5, padx=5, pady=5)
+
+        ttk.Label(frame_Tools, text="V3 (V)").grid(row=0, column=6, padx=5, pady=5, sticky="w")
+        ttk.Entry(frame_Tools, textvariable=self.V3, width=10).grid(row=0, column=7, padx=5, pady=5)
+
+        # ========== 第二行：按钮 ==========
+        self.tool_set_mearsure_button = ttk.Button(
+            frame_Tools,
+            text="Measure Mode",
+            command=self.set_measure_mode
+        )
+        self.tool_set_mearsure_button.grid(row=1, column=0, columnspan=2, padx=5, pady=8, sticky="w")
+
+        self.tool_set_vol_button = ttk.Button(
+            frame_Tools,
+            text="Power Mode",
+            command=self.set_power_suplly_mode
+        )
+        self.tool_set_vol_button.grid(row=1, column=2, columnspan=2, padx=5, pady=8, sticky="w")
 
     def connect(self):
         resource_name = self.instr_var.get()
@@ -146,6 +183,44 @@ class N6705CUI:
     def get_selected_channel(self):
         return self.channel_var.get()[-1]
 
+
+    def set_measure_mode(self):
+        self.controller.set_mode(2, "VMETer")
+        self.controller.set_mode(3, "VMETer")
+        self.controller.set_mode(4, "VMETer")
+
+    def _get_float_or_default(self, var: tk.StringVar, default: float) -> float:
+        try:
+            value = var.get().strip()
+            if value == "":
+                return default
+            return float(value)
+        except ValueError:
+            return default
+
+    def set_power_suplly_mode(self):
+        # ---------- 设置模式 ----------
+        for ch in (2, 3, 4):
+            self.controller.set_mode(ch, "PS2Q")
+
+        # ---------- 读取输入（带默认值） ----------
+        I_limit = self._get_float_or_default(self.I_limit, 0.02)
+        V2 = self._get_float_or_default(self.V1, 0.8)
+        V3 = self._get_float_or_default(self.V2, 1.3)
+        V4 = self._get_float_or_default(self.V3, 1.7)
+
+        # ---------- 设置电压 ----------
+        self.controller.set_voltage(2, V2)
+        self.controller.set_voltage(3, V3)
+        self.controller.set_voltage(4, V4)
+
+        # ---------- 设置限流 ----------
+        for ch in (2, 3, 4):
+            self.controller.set_current_limit(ch, I_limit)
+
+        # ---------- 上电 ----------
+        for ch in (2, 3, 4):
+            self.controller.channel_on(ch)
 
     def run_n6705c_test(self):
         print("Running N6705C Test...")
